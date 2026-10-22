@@ -8,10 +8,16 @@ import { ViolationList } from './components/validation/ViolationList'
 import { ProposedActionsList } from './components/routine/ProposedActionsList'
 import { ExecutionPanel } from './components/execution/ExecutionPanel'
 import { AuditHistory } from './components/audit/AuditHistory'
-import { ShieldCheck, ShieldAlert, Cpu } from 'lucide-react'
+import { ShieldCheck, ShieldAlert, Cpu, AlertTriangle, RefreshCw } from 'lucide-react'
 
 const DashboardContent: React.FC = () => {
-  const { validationResult, proposedActions, isValidating } = useRoutine()
+  const {
+    validationResult,
+    proposedActions,
+    isValidating,
+    backendError,
+    refreshBackendStatus,
+  } = useRoutine()
 
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col font-sans">
@@ -27,6 +33,33 @@ const DashboardContent: React.FC = () => {
           <div className="lg:col-span-8 space-y-5">
             {/* Natural-Language Routine Input & Presets */}
             <RoutineInputPanel />
+
+            {/* Backend Connectivity Error Alert */}
+            {backendError && (
+              <div className="p-4 rounded-xl bg-rose-950/40 border border-rose-500/40 text-rose-200 text-xs space-y-2.5">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-2 font-bold text-rose-300">
+                    <AlertTriangle className="w-4 h-4 text-rose-400 shrink-0" />
+                    <span>Authoritative Python Backend Unreachable</span>
+                  </div>
+                  <button
+                    onClick={() => refreshBackendStatus()}
+                    className="inline-flex items-center px-2 py-1 rounded bg-rose-900/60 hover:bg-rose-800 text-rose-200 text-[11px] font-semibold transition-colors"
+                    type="button"
+                  >
+                    <RefreshCw className="w-3 h-3 mr-1" />
+                    Retry
+                  </button>
+                </div>
+                <p className="leading-relaxed opacity-95">{backendError}</p>
+                <div className="pt-2 border-t border-rose-900/60 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-[11px]">
+                  <span className="text-slate-400">Start the backend locally:</span>
+                  <code className="bg-slate-900 px-2 py-1 rounded text-rose-300 font-mono">
+                    .\backend\.venv\Scripts\uvicorn app.main:app --app-dir backend --port 8000
+                  </code>
+                </div>
+              </div>
+            )}
 
             {/* Validation Feedback & Violations */}
             {validationResult && (
@@ -47,7 +80,7 @@ const DashboardContent: React.FC = () => {
               </div>
             )}
 
-            {!validationResult && !isValidating && (
+            {!validationResult && !isValidating && !backendError && (
               <div className="p-8 rounded-2xl border border-dashed border-slate-800 bg-slate-900/30 text-center space-y-2">
                 <div className="mx-auto w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center text-slate-400">
                   <ShieldCheck className="w-5 h-5" />
@@ -135,7 +168,7 @@ const DashboardContent: React.FC = () => {
               <div className="pt-2 border-t border-slate-800 text-[11px] text-slate-500 flex items-start space-x-2">
                 <ShieldAlert className="w-4 h-4 text-slate-400 shrink-0 mt-0.5" />
                 <span>
-                  Authoritative validation will be verified against the deterministic Python backend service.
+                  Authoritative validation is evaluated directly by the Python FastAPI backend engine.
                 </span>
               </div>
             </div>

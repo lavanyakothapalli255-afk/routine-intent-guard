@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import {
   Play,
   XCircle,
@@ -13,10 +13,18 @@ export const ExecutionPanel: React.FC = () => {
   const {
     validationResult,
     isExecuting,
+    isExecuted,
     executionFeedback,
     executeCurrentRoutine,
     cancelCurrentRoutine,
   } = useRoutine()
+
+  const [approvalConfirmed, setApprovalConfirmed] = useState(false)
+
+  // Reset explicit confirmation whenever the routine or validation result changes
+  useEffect(() => {
+    setApprovalConfirmed(false)
+  }, [validationResult])
 
   if (!validationResult) {
     if (executionFeedback) {
@@ -39,7 +47,12 @@ export const ExecutionPanel: React.FC = () => {
     <div className="p-5 rounded-2xl bg-slate-800/80 border border-slate-700/80 shadow-sm space-y-3">
       <div className="flex items-center justify-between">
         <h4 className="text-sm font-semibold text-white flex items-center space-x-2">
-          {isBlocked ? (
+          {isExecuted ? (
+            <>
+              <ShieldCheck className="w-4 h-4 text-emerald-400" />
+              <span>Routine Executed (Simulation Complete)</span>
+            </>
+          ) : isBlocked ? (
             <>
               <ShieldAlert className="w-4 h-4 text-rose-400" />
               <span>Execution Controls (Blocked)</span>
@@ -65,12 +78,38 @@ export const ExecutionPanel: React.FC = () => {
       </div>
 
       <p className="text-xs text-slate-400 leading-relaxed">
-        {isBlocked
+        {isExecuted
+          ? 'This routine has been safely simulated. Virtual device states and audit log history have been updated. You can select another preset scenario or edit actions above to revalidate.'
+          : isBlocked
           ? 'Execution is locked because this routine violates critical physical safety or security policies. Use the Edit tool on hazardous actions above to resolve violations before revalidating.'
           : isApprovalNeeded
-          ? 'This routine contains sensitive entry actions. Review the proposed changes carefully. By clicking Approve, you simulate explicit homeowner override authorization.'
+          ? 'This routine contains sensitive entry actions. Review the proposed changes carefully and confirm homeowner authorization below to simulate execution.'
           : 'All proposed actions have satisfied policy verification. Click below to simulate state updates on virtual devices.'}
       </p>
+
+      {/* Explicit approval checkbox for NEEDS_APPROVAL routines */}
+      {isApprovalNeeded && !isExecuted && (
+        <div className="p-3 rounded-xl bg-amber-950/40 border border-amber-800/60 flex items-start space-x-3">
+          <input
+            type="checkbox"
+            id="override-confirmation"
+            checked={approvalConfirmed}
+            onChange={(e) => setApprovalConfirmed(e.target.checked)}
+            className="mt-0.5 h-4 w-4 rounded border-amber-600 text-amber-600 focus:ring-amber-500 bg-slate-900 cursor-pointer"
+          />
+          <label
+            htmlFor="override-confirmation"
+            className="text-xs text-amber-200 cursor-pointer select-none space-y-0.5"
+          >
+            <span className="font-semibold block text-amber-100">
+              Homeowner Override Authorization Required
+            </span>
+            <span>
+              I understand this routine unlocks perimeter access. I explicitly authorize simulated execution of these actions.
+            </span>
+          </label>
+        </div>
+      )}
 
       {/* Buttons */}
       <div className="flex flex-wrap items-center justify-end gap-2.5 pt-2 border-t border-slate-700/60">
@@ -86,10 +125,15 @@ export const ExecutionPanel: React.FC = () => {
 
         <button
           type="button"
-          onClick={executeCurrentRoutine}
-          disabled={isBlocked || isExecuting}
+          onClick={() => executeCurrentRoutine(approvalConfirmed)}
+          disabled={
+            isBlocked ||
+            isExecuting ||
+            isExecuted ||
+            (isApprovalNeeded && !approvalConfirmed)
+          }
           className={`inline-flex items-center px-5 py-2 rounded-xl text-xs font-bold transition-all shadow-md ${
-            isBlocked
+            isBlocked || isExecuted || (isApprovalNeeded && !approvalConfirmed)
               ? 'bg-slate-800 text-slate-500 border border-slate-700 cursor-not-allowed opacity-60'
               : isApprovalNeeded
               ? 'bg-amber-600 hover:bg-amber-500 text-white shadow-amber-600/20'
@@ -100,6 +144,11 @@ export const ExecutionPanel: React.FC = () => {
             <>
               <Loader2 className="w-3.5 h-3.5 mr-2 animate-spin" />
               Simulating Execution...
+            </>
+          ) : isExecuted ? (
+            <>
+              <Check className="w-3.5 h-3.5 mr-1.5 text-emerald-400" />
+              Executed (Simulation Complete)
             </>
           ) : isApprovalNeeded ? (
             <>

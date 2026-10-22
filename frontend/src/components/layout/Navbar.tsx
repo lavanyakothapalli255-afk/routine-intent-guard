@@ -1,9 +1,9 @@
 import React from 'react'
-import { ShieldCheck, RotateCcw, Sparkles } from 'lucide-react'
+import { ShieldCheck, RotateCcw, Sparkles, RefreshCw } from 'lucide-react'
 import { useRoutine } from '../../context/RoutineContext'
 
 export const Navbar: React.FC = () => {
-  const { resetEnvironment } = useRoutine()
+  const { resetEnvironment, backendOnline, refreshBackendStatus } = useRoutine()
 
   return (
     <header className="border-b border-slate-800 bg-slate-900/80 backdrop-blur sticky top-0 z-40">
@@ -30,10 +30,46 @@ export const Navbar: React.FC = () => {
 
         {/* Environment status & actions */}
         <div className="flex items-center space-x-3">
+          {/* Backend Connectivity Status Pill */}
+          <div
+            className={`flex items-center space-x-2 px-3 py-1.5 rounded-lg border text-xs font-medium transition-colors ${
+              backendOnline === true
+                ? 'bg-emerald-950/40 border-emerald-500/30 text-emerald-300'
+                : backendOnline === false
+                ? 'bg-rose-950/40 border-rose-500/30 text-rose-300'
+                : 'bg-slate-800/80 border-slate-700/60 text-slate-400'
+            }`}
+          >
+            <span
+              className={`w-2 h-2 rounded-full ${
+                backendOnline === true
+                  ? 'bg-emerald-400 animate-pulse'
+                  : backendOnline === false
+                  ? 'bg-rose-400'
+                  : 'bg-slate-500'
+              }`}
+            />
+            <span>
+              {backendOnline === true
+                ? 'Python Guard: Online'
+                : backendOnline === false
+                ? 'Python Guard: Offline'
+                : 'Checking Python Guard...'}
+            </span>
+            <button
+              onClick={() => refreshBackendStatus()}
+              className="ml-1 text-slate-400 hover:text-white transition-colors"
+              title="Refresh backend status"
+              type="button"
+            >
+              <RefreshCw className="w-3 h-3" />
+            </button>
+          </div>
+
           <div className="hidden sm:flex items-center space-x-2 px-3 py-1.5 rounded-lg bg-slate-800/80 border border-slate-700/60 text-xs text-slate-300">
-            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+            <span className="w-2 h-2 rounded-full bg-cyan-400" />
             <span className="text-slate-400">Environment:</span>
-            <span className="font-medium text-emerald-400">Simulated Smart-Home</span>
+            <span className="font-medium text-cyan-300">Simulated Devices</span>
           </div>
 
           <button
@@ -52,7 +88,7 @@ export const Navbar: React.FC = () => {
       <div className="bg-indigo-950/40 border-t border-indigo-900/40 px-4 py-1.5 text-center text-xs text-indigo-300/90 flex items-center justify-center space-x-1.5">
         <Sparkles className="w-3.5 h-3.5 text-indigo-400 shrink-0" />
         <span>
-          <strong>Prototype Simulation:</strong> Authoritative policy enforcement runs on the Python FastAPI validator. No real physical devices are controlled.
+          <strong>Simulated Prototype:</strong> Authoritative policy enforcement runs on the Python FastAPI validator. No physical smart-home devices or Alexa+ endpoints are controlled.
         </span>
       </div>
     </header>

@@ -5,6 +5,7 @@ import {
   ShieldAlert,
   Clock,
   ShieldCheck,
+  Cpu,
 } from 'lucide-react'
 import type { ValidationResult } from '../../types/routine'
 
@@ -63,6 +64,12 @@ export const ValidationBanner: React.FC<ValidationBannerProps> = ({
               >
                 {validation.status}
               </span>
+              {validation.backendValidated && (
+                <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-semibold bg-indigo-500/20 text-indigo-300 border border-indigo-500/40">
+                  <Cpu className="w-3 h-3 mr-1 text-indigo-400" />
+                  Authoritative Python Verdict
+                </span>
+              )}
             </div>
             <p className="text-sm opacity-90 leading-relaxed max-w-2xl">
               {validation.summary}
@@ -77,7 +84,7 @@ export const ValidationBanner: React.FC<ValidationBannerProps> = ({
           </span>
           <span className="flex items-center space-x-1 mt-1">
             <ShieldCheck className="w-3.5 h-3.5" />
-            <span>Guard Policy v1.0</span>
+            <span>Python Guard API</span>
           </span>
         </div>
       </div>

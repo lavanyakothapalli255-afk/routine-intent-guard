@@ -11,6 +11,7 @@ export const INITIAL_DEVICES: Device[] = [
     state: {
       locked: true,
     },
+    supportedActions: ['lock', 'unlock'],
     lastUpdated: '2 mins ago',
   },
   {
@@ -23,6 +24,7 @@ export const INITIAL_DEVICES: Device[] = [
       power: true,
       brightness: 75,
     },
+    supportedActions: ['turn_on', 'turn_off', 'dim'],
     lastUpdated: '10 mins ago',
   },
   {
@@ -36,6 +38,7 @@ export const INITIAL_DEVICES: Device[] = [
       targetTemperature: 72,
       mode: 'cool',
     },
+    supportedActions: ['set_temperature', 'set_mode'],
     lastUpdated: 'Just now',
   },
   {
@@ -49,6 +52,7 @@ export const INITIAL_DEVICES: Device[] = [
       streaming: true,
       motionDetected: false,
     },
+    supportedActions: ['stream', 'record'],
     lastUpdated: '1 min ago',
   },
   {
@@ -62,6 +66,7 @@ export const INITIAL_DEVICES: Device[] = [
       temperature: 0,
       active: false,
     },
+    supportedActions: ['turn_off', 'check_status'],
     lastUpdated: '1 hour ago',
   },
   {
@@ -74,6 +79,7 @@ export const INITIAL_DEVICES: Device[] = [
       closed: true,
       locked: true,
     },
+    supportedActions: ['close_garage', 'open_garage', 'lock', 'unlock'],
     lastUpdated: '15 mins ago',
   },
   {
@@ -86,6 +92,7 @@ export const INITIAL_DEVICES: Device[] = [
       power: false,
       brightness: 20,
     },
+    supportedActions: ['turn_on', 'turn_off', 'dim'],
     lastUpdated: '3 hours ago',
   },
   {
@@ -98,6 +105,7 @@ export const INITIAL_DEVICES: Device[] = [
       armed: true,
       mode: 'home',
     },
+    supportedActions: ['arm', 'disarm'],
     lastUpdated: '5 mins ago',
   },
 ]

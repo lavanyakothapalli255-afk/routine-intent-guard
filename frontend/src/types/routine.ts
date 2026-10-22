@@ -34,6 +34,7 @@ export interface Device {
   status: DeviceStatus
   batteryLevel?: number
   lastUpdated: string
+  supportedActions: string[]
 }
 
 export type ValidationStatus = 'VALID' | 'NEEDS_APPROVAL' | 'BLOCKED'
@@ -57,6 +58,8 @@ export interface ProposedAction {
   room: string
   description: string
   targetState: DeviceState
+  actionName?: string
+  parameters?: Record<string, any>
   isEdited?: boolean
 }
 
@@ -67,6 +70,8 @@ export interface ValidationResult {
   canApprove: boolean
   requiresExplicitConfirmation: boolean
   validatedAt: string
+  backendValidated?: boolean
+  violationCodes?: string[]
 }
 
 export interface AuditLogEntry {
@@ -86,4 +91,8 @@ export interface PresetScenario {
   description: string
   status: ValidationStatus
   prompt: string
+  routineId: string
+  actions: ProposedAction[]
+  excludedDevices?: string[]
+  excludedRooms?: string[]
 }

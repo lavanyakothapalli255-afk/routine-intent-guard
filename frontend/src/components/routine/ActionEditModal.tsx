@@ -85,13 +85,19 @@ export const ActionEditModal: React.FC<ActionEditModalProps> = ({
                 <span className="text-xs text-slate-300">Oven Heating Element:</span>
                 <button
                   type="button"
-                  onClick={() =>
+                  onClick={() => {
+                    const newPower = !targetState.power
                     setTargetState({
                       ...targetState,
-                      power: !targetState.power,
-                      active: !targetState.power,
+                      power: newPower,
+                      active: newPower,
                     })
-                  }
+                    setDescription(
+                      newPower
+                        ? 'Preheat kitchen oven to 450°F unattended'
+                        : 'Ensure kitchen oven heating element is OFF (Safe)'
+                    )
+                  }}
                   className={`px-3 py-1 rounded text-xs font-bold transition-colors ${
                     targetState.power
                       ? 'bg-rose-500 text-white'
